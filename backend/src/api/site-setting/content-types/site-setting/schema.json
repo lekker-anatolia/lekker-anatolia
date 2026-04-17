@@ -1,0 +1,60 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "Site Settings",
+    "description": "Global site configuration: contact info, social links, etc."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "whatsapp_phone": {
+      "type": "string",
+      "required": true,
+      "default": "31612345678",
+      "description": "Phone number without + or spaces (e.g. 31612345678)"
+    },
+    "email": {
+      "type": "email"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "instagram_url": {
+      "type": "string"
+    },
+    "facebook_url": {
+      "type": "string"
+    },
+    "kvk_number": {
+      "type": "string",
+      "description": "KvK (Chamber of Commerce) registration number"
+    },
+    "btw_number": {
+      "type": "string",
+      "description": "BTW (VAT) number"
+    },
+    "hero_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "Hero section background image (recommended: 1920×1080 or wider)"
+    },
+    "hero_title": {
+      "type": "string",
+      "description": "Main heading in the hero — leave empty to use the default"
+    },
+    "hero_subtitle": {
+      "type": "text",
+      "description": "Supporting text below the hero heading — leave empty to use the default"
+    }
+  }
+}

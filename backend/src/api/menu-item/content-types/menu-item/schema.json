@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "menu_items",
+  "info": {
+    "singularName": "menu-item",
+    "pluralName": "menu-items",
+    "displayName": "Menu Item",
+    "description": "Individual dishes and products"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "name": { "type": "string", "required": true },
+    "description": { "type": "text" },
+    "price": {
+      "type": "decimal",
+      "description": "Price per person / per piece (leave empty if price on request)"
+    },
+    "price_label": {
+      "type": "string",
+      "description": "Override price display, e.g. 'Prijs op aanvraag' or '€ 3,50 p.p.'"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::menu-category.menu-category",
+      "inversedBy": "menu_items"
+    },
+    "is_vegetarian": { "type": "boolean", "default": false },
+    "is_vegan": { "type": "boolean", "default": false },
+    "is_halal": { "type": "boolean", "default": true },
+    "allergens": {
+      "type": "string",
+      "description": "Comma-separated allergens, e.g. 'gluten, lactose'"
+    },
+    "is_available": { "type": "boolean", "default": true },
+    "sort_order": { "type": "integer", "default": 0 }
+  }
+}

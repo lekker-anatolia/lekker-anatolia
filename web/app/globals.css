@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+:root {
+  --radius: 1rem;
+
+  --background: oklch(0.96 0.015 65);
+  --foreground: oklch(0.23 0.01 40);
+
+  --card: oklch(0.985 0.008 65);
+  --card-foreground: oklch(0.23 0.01 40);
+
+  --popover: oklch(0.99 0.005 65);
+  --popover-foreground: oklch(0.23 0.01 40);
+
+  --primary: oklch(0.29 0.01 40);
+  --primary-foreground: oklch(0.98 0.004 65);
+
+  --secondary: oklch(0.93 0.015 60);
+  --secondary-foreground: oklch(0.25 0.01 40);
+
+  --muted: oklch(0.93 0.01 60);
+  --muted-foreground: oklch(0.48 0.01 45);
+
+  --accent: oklch(0.68 0.09 45);
+  --accent-foreground: oklch(0.98 0.004 65);
+
+  --border: oklch(0.87 0.01 60);
+  --input: oklch(0.87 0.01 60);
+  --ring: oklch(0.68 0.09 45);
+}
+
+* {
+  border-color: hsl(from var(--border) h s l);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: hsl(from var(--background) h s l);
+  color: hsl(from var(--foreground) h s l);
+  font-family: var(--font-sans), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif), serif;
+  letter-spacing: -0.02em;
+}
+
+a,
+button {
+  transition: all 0.2s ease;
+}

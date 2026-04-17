@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contact_submissions",
+  "info": {
+    "singularName": "contact-submission",
+    "pluralName": "contact-submissions",
+    "displayName": "Contact Submission",
+    "description": "Contact form submissions from the website"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "enumeration",
+      "enum": [
+        "catering_aanvraag",
+        "algemene_vraag",
+        "klacht",
+        "samenwerking",
+        "overig"
+      ],
+      "default": "algemene_vraag"
+    },
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["nieuw", "in_behandeling", "beantwoord", "gesloten"],
+      "default": "nieuw"
+    },
+    "notes": {
+      "type": "text",
+      "description": "Internal notes (not visible to customer)"
+    }
+  }
+}
