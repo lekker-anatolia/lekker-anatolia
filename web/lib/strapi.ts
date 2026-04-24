@@ -1,5 +1,19 @@
-export const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
-const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN ?? "";
+function readStrapiBaseUrl(): string {
+  const raw =
+    process.env.STRAPI_URL?.trim() ||
+    process.env.NEXT_PUBLIC_API_URL?.trim() ||
+    "";
+  if (raw) {
+    // Strip trailing slash so /api/... joins correctly
+    return raw.replace(/\/$/, "");
+  }
+  return "http://localhost:1337";
+}
+
+// Prefer STRAPI_URL (server-only). NEXT_PUBLIC_API_URL is a supported fallback.
+export const STRAPI_URL = readStrapiBaseUrl();
+
+const STRAPI_TOKEN = (process.env.STRAPI_API_TOKEN ?? "").trim();
 
 type FetchOptions = {
   path: string;
@@ -39,9 +53,17 @@ export async function strapiFetch<T>({
     const res = await fetch(`${STRAPI_URL}/api${path}`, fetchInit);
 
     if (!res.ok) {
-      // Only log unexpected errors; 404/403 during build (Strapi offline / no token) are expected
-      if (res.status !== 404 && res.status !== 403 && res.status !== 401) {
-        console.error(`Strapi error ${res.status} for ${path}`);
+      const errBody = await res.text().catch(() => "");
+      if (res.status === 404 || res.status === 403 || res.status === 401) {
+        // Always log auth/deny so Vercel / server logs show the real cause (token, permissions, URL).
+        console.warn(
+          `[strapi] ${res.status} ${path} — check STRAPI_URL, STRAPI_API_TOKEN, and Public permissions in Strapi. ${errBody ? errBody.slice(0, 200) : ""}`
+        );
+      } else {
+        console.error(
+          `Strapi error ${res.status} for ${path}:`,
+          errBody.slice(0, 500)
+        );
       }
       return null;
     }
