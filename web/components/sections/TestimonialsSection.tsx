@@ -10,30 +10,6 @@ type TestimonialData = {
   rating: number;
 };
 
-const staticTestimonials: TestimonialData[] = [
-  {
-    id: 1,
-    name: "Sarah & Tom",
-    role: "Bruiloft",
-    text: "Lekker Anatolia heeft onze bruiloft compleet gemaakt. De lahmacun en mezze waren verrukkelijk — onze gasten waren enthousiast. Persoonlijk contact en alles tot in de puntjes geregeld.",
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: "Marta V.",
-    role: "Bedrijfsevenement",
-    text: "Voor ons bedrijfsfeest hadden we catering nodig voor 80 personen. Lekker Anatolia leverde precies wat ze beloofden: smaakvol, op tijd en professioneel. Zeker voor herhaling vatbaar!",
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: "Yusuf K.",
-    role: "Familiebijeenkomst",
-    text: "Authentieke smaken, warme bediening en een fijne communicatie. We voelden ons echt geholpen bij het samenstellen van het menu. Aanrader voor elke gelegenheid.",
-    rating: 5,
-  },
-];
-
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5" aria-label={`${rating} van 5 sterren`}>
@@ -55,14 +31,17 @@ function StarRating({ rating }: { rating: number }) {
 async function getTestimonials(): Promise<TestimonialData[]> {
   const res = await strapiFetch<StrapiList<TestimonialData>>({
     path: "/testimonials?sort=sort_order:asc&pagination[limit]=6&filters[publishedAt][$notNull]=true",
-    next: { revalidate: 300 },
+    next: { revalidate: 3 },
   });
-  if (!res?.data?.length) return staticTestimonials;
-  return res.data;
+  return res?.data ?? [];
 }
 
 export default async function TestimonialsSection() {
   const items = await getTestimonials();
+
+  // Hide the whole section when Strapi has no published testimonials —
+  // honest UX: no fake reviews.
+  if (items.length === 0) return null;
 
   return (
     <section className="py-20 sm:py-24">

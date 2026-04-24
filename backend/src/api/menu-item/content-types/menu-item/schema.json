@@ -40,6 +40,16 @@
       "description": "Comma-separated allergens, e.g. 'gluten, lactose'"
     },
     "is_available": { "type": "boolean", "default": true },
+    "hide_price": {
+      "type": "boolean",
+      "default": false,
+      "description": "Verberg de prijs van dit specifieke item, ook wanneer prijzen globaal zichtbaar zijn. Toont 'Vraag via WhatsApp' in plaats daarvan."
+    },
+    "is_popular": {
+      "type": "boolean",
+      "default": false,
+      "description": "Markeer als 'Chef's pick' — toont een vlam-badge op het gerecht op de site."
+    },
     "sort_order": { "type": "integer", "default": 0 }
   }
 }

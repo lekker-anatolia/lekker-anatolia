@@ -22,15 +22,27 @@ export async function strapiFetch<T>({
       headers["Authorization"] = `Bearer ${STRAPI_TOKEN}`;
     }
 
-    const res = await fetch(`${STRAPI_URL}/api${path}`, {
+    // In dev, always fetch fresh so Strapi edits show up immediately.
+    // In prod, honour the caller's `next.revalidate`.
+    const isDev = process.env.NODE_ENV !== "production";
+    const fetchInit: RequestInit & { next?: NextFetchRequestConfig } = {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
-      next,
-    });
+    };
+    if (isDev) {
+      fetchInit.cache = "no-store";
+    } else if (next) {
+      fetchInit.next = next;
+    }
+
+    const res = await fetch(`${STRAPI_URL}/api${path}`, fetchInit);
 
     if (!res.ok) {
-      console.error(`Strapi error ${res.status} for ${path}`);
+      // Only log unexpected errors; 404/403 during build (Strapi offline / no token) are expected
+      if (res.status !== 404 && res.status !== 403 && res.status !== 401) {
+        console.error(`Strapi error ${res.status} for ${path}`);
+      }
       return null;
     }
 
@@ -82,6 +94,7 @@ export type SiteSettingData = {
   hero_image?: StrapiMedia | null;
   hero_title?: string | null;
   hero_subtitle?: string | null;
+  show_prices?: boolean | null;
 };
 
 export type FaqItemData = {

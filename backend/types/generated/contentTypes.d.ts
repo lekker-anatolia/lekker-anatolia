@@ -572,9 +572,11 @@ export interface ApiMenuItemMenuItem extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
+    hide_price: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     image: Schema.Attribute.Media<'images'>;
     is_available: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     is_halal: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    is_popular: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     is_vegan: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     is_vegetarian: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -626,6 +628,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    show_prices: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

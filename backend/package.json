@@ -7,13 +7,15 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "deploy": "strapi deploy"
+    "deploy": "strapi deploy",
+    "seed:menu": "node scripts/seed-menu.mjs"
   },
   "dependencies": {
     "@strapi/plugin-users-permissions": "5.42.0",
     "@strapi/strapi": "5.42.0",
     "better-sqlite3": "12.9.0",
     "esbuild": "^0.28.0",
+    "pg": "^8.20.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.30.3",

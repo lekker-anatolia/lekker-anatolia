@@ -72,7 +72,10 @@ export default async function RootLayout({
       <head>
         <Analytics />
       </head>
-      <body className={`${inter.variable} ${cormorant.variable} antialiased`}>
+      <body
+        className={`${inter.variable} ${cormorant.variable} antialiased`}
+        suppressHydrationWarning
+      >
         <JsonLd settings={settings} />
         <Header phone={settings.whatsapp_phone} />
         <main>{children}</main>

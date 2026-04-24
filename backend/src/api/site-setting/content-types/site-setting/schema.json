@@ -55,6 +55,11 @@
     "hero_subtitle": {
       "type": "text",
       "description": "Supporting text below the hero heading — leave empty to use the default"
+    },
+    "show_prices": {
+      "type": "boolean",
+      "default": true,
+      "description": "Toon prijzen op de site. Zet uit om alle prijzen te verbergen en vervang ze door 'Vraag via WhatsApp'. Individuele items kunnen hun prijs ook los verbergen via het 'hide_price' veld op Menu Item."
     }
   }
 }

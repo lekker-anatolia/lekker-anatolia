@@ -8,41 +8,18 @@ import {
 } from "@/components/ui/accordion";
 import { strapiFetch, type StrapiList, type FaqItemData } from "@/lib/strapi";
 
-const staticFaqs = [
-  {
-    question: "Hoe kan ik catering aanvragen?",
-    answer:
-      "Stuur ons een bericht via WhatsApp of gebruik het contactformulier op onze website. We nemen daarna zo snel mogelijk contact met je op om de details te bespreken.",
-  },
-  {
-    question: "Voor welke gelegenheden verzorgen jullie catering?",
-    answer:
-      "Wij verzorgen catering voor uiteenlopende gelegenheden: verjaardagsfeesten, bedrijfsbijeenkomsten, bruiloften, familiebijeenkomsten en meer. Neem contact op om te bespreken wat wij voor jou kunnen betekenen.",
-  },
-  {
-    question: "Hoe ver van tevoren moet ik bestellen?",
-    answer:
-      "We raden aan om minimaal 3 tot 5 werkdagen van tevoren contact op te nemen, zodat we voldoende tijd hebben om alles zorgvuldig voor te bereiden. Voor grotere evenementen is meer voorbereidingstijd gewenst.",
-  },
-  {
-    question: "Kan ik het menu aanpassen?",
-    answer:
-      "Jazeker. We denken graag met je mee over een aanbod dat past bij jouw gelegenheid, dieetwensen en budget. Bespreek je wensen via WhatsApp of ons contactformulier.",
-  },
-  {
-    question: "Hoe werkt de betaling?",
-    answer:
-      "Na het bespreken van je aanvraag ontvang je een offerte op maat. Betaling verloopt momenteel via overboeking. We werken aan uitbreiding van betaalmogelijkheden.",
-  },
-];
+type FaqPreviewItem = {
+  question: string;
+  answer: string;
+};
 
-async function getFaqItems(): Promise<typeof staticFaqs> {
+async function getFaqItems(): Promise<FaqPreviewItem[]> {
   const res = await strapiFetch<StrapiList<FaqItemData>>({
     path: "/faq-items?sort=sort_order:asc&pagination[limit]=5&filters[publishedAt][$notNull]=true",
-    next: { revalidate: 300 },
+    next: { revalidate: 3 },
   });
 
-  if (!res?.data?.length) return staticFaqs;
+  if (!res?.data?.length) return [];
 
   return res.data.map((item) => ({
     question: item.question,
@@ -56,6 +33,9 @@ interface FaqPreviewProps {
 
 export default async function FaqPreview({ showViewAll = true }: FaqPreviewProps) {
   const faqs = await getFaqItems();
+
+  // Hide the whole section when Strapi has no published FAQ items.
+  if (faqs.length === 0) return null;
 
   return (
     <section className="py-20 sm:py-24">
