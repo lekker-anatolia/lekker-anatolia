@@ -5,12 +5,8 @@ import Container from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { getSiteSettings } from "@/lib/settings";
 import { createWhatsAppLink } from "@/lib/whatsapp";
-import {
-  strapiFetch,
-  getStrapiMediaUrl,
-  type StrapiList,
-  type StrapiMedia,
-} from "@/lib/strapi";
+import { getStrapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
+import { getMenuCategoriesForPage, type MenuCategoryData } from "@/lib/menu-data";
 import MenuCategoryTabs from "@/components/sections/MenuCategoryTabs";
 
 export const metadata: Metadata = {
@@ -21,49 +17,7 @@ export const metadata: Metadata = {
 
 // ——— Types ———
 
-type MenuItemData = {
-  id: number;
-  documentId?: string;
-  name: string;
-  description?: string;
-  price?: number;
-  price_label?: string;
-  image?: StrapiMedia | null;
-  is_vegetarian?: boolean;
-  is_vegan?: boolean;
-  is_halal?: boolean;
-  is_popular?: boolean;
-  allergens?: string;
-  is_available?: boolean;
-  hide_price?: boolean;
-};
-
-type MenuCategoryData = {
-  id: number;
-  documentId?: string;
-  name: string;
-  slug: string;
-  description?: string;
-  image?: StrapiMedia | null;
-  menu_items?: MenuItemData[];
-};
-
-// ——— Data fetching ———
-
-async function getMenuCategories(): Promise<MenuCategoryData[]> {
-  const res = await strapiFetch<StrapiList<MenuCategoryData>>({
-    path: [
-      "/menu-categories",
-      "?sort=sort_order:asc",
-      "&populate[0]=menu_items",
-      "&populate[1]=image",
-      "&populate[menu_items][populate][0]=image",
-      "&filters[publishedAt][$notNull]=true",
-    ].join(""),
-    next: { revalidate: 3 },
-  });
-  return res?.data ?? [];
-}
+type MenuItemData = NonNullable<MenuCategoryData["menu_items"]>[number];
 
 // ——— Helpers ———
 
@@ -122,7 +76,7 @@ function DietBadge({
 
 export default async function MenuPage() {
   const [categories, settings] = await Promise.all([
-    getMenuCategories(),
+    getMenuCategoriesForPage(),
     getSiteSettings(),
   ]);
 
