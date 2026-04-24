@@ -31,8 +31,8 @@ export type SiteSettings = {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const res = await strapiFetch<StrapiSingle<SiteSettingData>>({
-    // populate=hero_image tells Strapi to include the media relation
-    path: "/site-setting?populate=hero_image",
+    // Strapi 5 REST uses plural API id: /api/site-settings (not /site-setting)
+    path: "/site-settings?populate=hero_image",
     next: { revalidate: 3 },
   });
 
