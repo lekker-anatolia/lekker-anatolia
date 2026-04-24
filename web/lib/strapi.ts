@@ -102,6 +102,19 @@ export function pickStrapiMedia(raw: unknown): StrapiMedia | null {
   if (typeof o.url === "string" && o.url.length > 0) {
     return o as StrapiMedia;
   }
+  if (o.formats && typeof o.formats === "object") {
+    for (const k of ["large", "medium", "small", "thumbnail"] as const) {
+      const fmt = (o.formats as StrapiMedia["formats"])?.[k];
+      if (fmt?.url) {
+        return {
+          id: typeof o.id === "number" ? o.id : 0,
+          url: fmt.url,
+          alternativeText: (o.alternativeText as string | null) ?? null,
+          formats: o.formats as StrapiMedia["formats"],
+        };
+      }
+    }
+  }
   const data = o.data;
   if (Array.isArray(data) && data[0] != null) {
     return pickStrapiMedia(data[0]);
@@ -123,12 +136,31 @@ export function pickStrapiMedia(raw: unknown): StrapiMedia | null {
   return null;
 }
 
-/** Converts a Strapi media URL to an absolute URL usable by next/image. */
+function firstUrlFromMedia(m: StrapiMedia | null, raw: unknown): string | null {
+  if (m?.url && m.url.length > 0) return m.url;
+  for (const k of ["large", "medium", "small", "thumbnail"] as const) {
+    const u = m?.formats?.[k]?.url;
+    if (u) return u;
+  }
+  if (raw && typeof raw === "object" && "formats" in raw) {
+    const formats = (raw as StrapiMedia).formats;
+    if (formats) {
+      for (const k of ["large", "medium", "small", "thumbnail"] as const) {
+        const u = formats[k]?.url;
+        if (u) return u;
+      }
+    }
+  }
+  return null;
+}
+
+/** Converts a Strapi media entry to an absolute URL usable by next/image. */
 export function getStrapiMediaUrl(media: unknown): string | null {
   const m = pickStrapiMedia(media);
-  if (!m?.url) return null;
-  if (m.url.startsWith("http")) return m.url;
-  return `${STRAPI_URL}${m.url}`;
+  const rel = firstUrlFromMedia(m, media);
+  if (!rel) return null;
+  if (rel.startsWith("http")) return rel;
+  return `${STRAPI_URL}${rel}`;
 }
 
 export type SiteSettingData = {
