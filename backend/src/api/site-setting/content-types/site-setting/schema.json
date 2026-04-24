@@ -41,6 +41,13 @@
       "type": "string",
       "description": "BTW (VAT) number"
     },
+    "hero": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "Homepage hero — used first if set; else Hero image; else /public/hero.jpeg in the app"
+    },
     "hero_image": {
       "type": "media",
       "multiple": false,

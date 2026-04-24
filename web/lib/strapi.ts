@@ -94,13 +94,41 @@ export type StrapiMedia = {
   };
 };
 
+/** Unwraps Strapi 4/5 media shapes (flat, or nested `data` / `attributes`) to a single object with `url`. */
+export function pickStrapiMedia(raw: unknown): StrapiMedia | null {
+  if (raw == null) return null;
+  if (typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  if (typeof o.url === "string" && o.url.length > 0) {
+    return o as StrapiMedia;
+  }
+  const data = o.data;
+  if (Array.isArray(data) && data[0] != null) {
+    return pickStrapiMedia(data[0]);
+  }
+  if (data && typeof data === "object") {
+    const d = data as Record<string, unknown>;
+    if (typeof d.url === "string" && d.url.length > 0) {
+      return d as StrapiMedia;
+    }
+    const attrs = d.attributes as Record<string, unknown> | undefined;
+    if (attrs && typeof attrs.url === "string") {
+      return {
+        id: typeof d.id === "number" ? d.id : 0,
+        url: attrs.url,
+        alternativeText: (attrs.alternativeText as string | null) ?? null,
+      };
+    }
+  }
+  return null;
+}
+
 /** Converts a Strapi media URL to an absolute URL usable by next/image. */
-export function getStrapiMediaUrl(media: StrapiMedia | null | undefined): string | null {
-  if (!media?.url) return null;
-  // Already absolute (production CDN / full URL configured in Strapi)
-  if (media.url.startsWith("http")) return media.url;
-  // Relative path — prepend the Strapi origin
-  return `${STRAPI_URL}${media.url}`;
+export function getStrapiMediaUrl(media: unknown): string | null {
+  const m = pickStrapiMedia(media);
+  if (!m?.url) return null;
+  if (m.url.startsWith("http")) return m.url;
+  return `${STRAPI_URL}${m.url}`;
 }
 
 export type SiteSettingData = {
@@ -113,6 +141,7 @@ export type SiteSettingData = {
   facebook_url?: string;
   kvk_number?: string;
   btw_number?: string;
+  hero?: StrapiMedia | null;
   hero_image?: StrapiMedia | null;
   hero_title?: string | null;
   hero_subtitle?: string | null;

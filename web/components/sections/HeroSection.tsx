@@ -35,7 +35,7 @@ const tileGradients = [
 
 export default function HeroSection({
   phone = "31612345678",
-  imageUrl = "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=1920&q=80",
+  imageUrl = "/hero.jpeg",
   imageAlt = "Anatolische gerechten op een rijkelijk gedekte tafel",
   title,
   subtitle,

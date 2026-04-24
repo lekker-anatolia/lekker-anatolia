@@ -1,6 +1,7 @@
 import {
   strapiFetch,
   getStrapiMediaUrl,
+  pickStrapiMedia,
   type StrapiSingle,
   type SiteSettingData,
 } from "./strapi";
@@ -8,9 +9,8 @@ import {
 const PHONE_FALLBACK =
   process.env.WHATSAPP_PHONE_FALLBACK ?? "31612345678";
 
-// Fallback hero image (Unsplash — swap with your own when ready)
-const HERO_IMAGE_FALLBACK =
-  "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=1920&q=80";
+// When Strapi has no `hero` and no `hero_image`, use `web/public/hero.jpeg` (served as /hero.jpeg)
+const HERO_IMAGE_FALLBACK = "/hero.jpeg";
 
 export type SiteSettings = {
   whatsapp_phone: string;
@@ -31,12 +31,14 @@ export type SiteSettings = {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const res = await strapiFetch<StrapiSingle<SiteSettingData>>({
-    // Strapi 5 REST uses plural API id: /api/site-settings (not /site-setting)
-    path: "/site-settings?populate=hero_image",
+    // Strapi 5: `hero` takes precedence over `hero_image` in code; then /public/hero.jpeg
+    path: "/site-settings?populate=*",
     next: { revalidate: 3 },
   });
 
   const data = res?.data;
+  const heroMedia =
+    pickStrapiMedia(data?.hero) ?? pickStrapiMedia(data?.hero_image);
 
   return {
     whatsapp_phone: data?.whatsapp_phone ?? PHONE_FALLBACK,
@@ -47,8 +49,10 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     facebook_url: data?.facebook_url ?? "",
     kvk_number: data?.kvk_number ?? "",
     btw_number: data?.btw_number ?? "",
-    hero_image_url: getStrapiMediaUrl(data?.hero_image) ?? HERO_IMAGE_FALLBACK,
-    hero_image_alt: data?.hero_image?.alternativeText ?? "Anatolische gerechten op een rijkelijk gedekte tafel",
+    hero_image_url: getStrapiMediaUrl(heroMedia) ?? HERO_IMAGE_FALLBACK,
+    hero_image_alt:
+      heroMedia?.alternativeText ??
+      "Anatolische gerechten op een rijkelijk gedekte tafel",
     hero_title: data?.hero_title ?? "",
     hero_subtitle: data?.hero_subtitle ?? "",
     // Default true: if the CMS field is unset (null/undefined), show prices.
