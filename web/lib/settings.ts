@@ -9,8 +9,14 @@ import {
 const PHONE_FALLBACK =
   process.env.WHATSAPP_PHONE_FALLBACK ?? "31612345678";
 
-// When Strapi has no `hero` and no `hero_image`, use `web/public/hero.jpeg` (served as /hero.jpeg)
+// `web/public/hero.jpeg` — this is the default unless you set HERO_USE_STRAPI_HERO=true
+// (then Site settings `hero` / `hero_image` in Strapi are used).
 const HERO_IMAGE_FALLBACK = "/hero.jpeg";
+
+function strapiHeroEnabled(): boolean {
+  const v = process.env.HERO_USE_STRAPI_HERO;
+  return v === "1" || v === "true";
+}
 
 export type SiteSettings = {
   whatsapp_phone: string;
@@ -31,7 +37,6 @@ export type SiteSettings = {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const res = await strapiFetch<StrapiSingle<SiteSettingData>>({
-    // Strapi 5: `hero` takes precedence over `hero_image` in code; then /public/hero.jpeg
     path: "/site-settings?populate=*",
     next: { revalidate: 3 },
   });
@@ -39,6 +44,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   const data = res?.data;
   const heroMedia =
     pickStrapiMedia(data?.hero) ?? pickStrapiMedia(data?.hero_image);
+  const fromStrapi = getStrapiMediaUrl(heroMedia);
+  const useCmsHero = strapiHeroEnabled() && Boolean(fromStrapi);
 
   return {
     whatsapp_phone: data?.whatsapp_phone ?? PHONE_FALLBACK,
@@ -49,10 +56,10 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     facebook_url: data?.facebook_url ?? "",
     kvk_number: data?.kvk_number ?? "",
     btw_number: data?.btw_number ?? "",
-    hero_image_url: getStrapiMediaUrl(heroMedia) ?? HERO_IMAGE_FALLBACK,
-    hero_image_alt:
-      heroMedia?.alternativeText ??
-      "Anatolische gerechten op een rijkelijk gedekte tafel",
+    hero_image_url: useCmsHero && fromStrapi ? fromStrapi : HERO_IMAGE_FALLBACK,
+    hero_image_alt: useCmsHero
+      ? (heroMedia?.alternativeText ?? "Lekker Anatolia")
+      : "Lekker Anatolia",
     hero_title: data?.hero_title ?? "",
     hero_subtitle: data?.hero_subtitle ?? "",
     // Default true: if the CMS field is unset (null/undefined), show prices.
