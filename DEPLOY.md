@@ -51,8 +51,24 @@ Pushes that only change `web/` can still be ignored by Strapi Cloud if you confi
 | `STRAPI_HOST` | **Hostname only** (same as `STRAPI_URL` without `https://`) — used by `next.config.ts` for `next/image` remote patterns. |
 | `STRAPI_API_TOKEN` | Token from Strapi admin (server-only; never `NEXT_PUBLIC_`). |
 | `NEXT_PUBLIC_SITE_URL` | Public marketing URL: your Vercel production URL or custom domain, e.g. `https://your-app.vercel.app` |
+| `REVALIDATE_SECRET` | Long random string. Used by `POST /api/revalidate` so Strapi can trigger an **immediate** cache refresh (see below). Optional but recommended. |
 
 6. Deploy. If the site fetches data only on the server, CORS is less critical; still keep `FRONTEND_URL` in Strapi correct for admin and any browser-side calls.
+
+### Instant updates (Strapi → Vercel)
+
+By default, the Next app uses **time-based** revalidation on Strapi fetches (e.g. a few seconds). That is **not** the same as “as soon as I publish in Strapi.”
+
+To refresh the site **immediately** after content or media changes:
+
+1. Set **`REVALIDATE_SECRET`** in Vercel (Production) to a strong random value.
+2. In Strapi (**Settings → Webhooks**), add a webhook with:
+   - **URL:** `https://YOUR_DOMAIN/api/revalidate?secret=THE_SAME_SECRET`
+   - **Method:** POST
+   - **Events:** e.g. *Entry* create / update / delete for the content types you use (or “Select all” while testing).
+3. Save and trigger a test publish. The app’s `POST /api/revalidate` handler will run `revalidatePath` for the main public routes.
+
+If you do not configure the webhook, you can still wait a short time for ISR, or trigger a Vercel redeploy.
 
 ### Previews (optional)
 
