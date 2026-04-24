@@ -47,6 +47,12 @@ const nextConfig: NextConfig = {
         hostname: strapiImageHostname(),
         pathname: "/**",
       },
+      // Strapi Cloud media CDN (different host than API *.strapiapp.com)
+      {
+        protocol: "https",
+        hostname: "*.media.strapiapp.com",
+        pathname: "/**",
+      },
       ...extraImageHosts().map((e) => ({
         protocol: e.protocol,
         hostname: e.hostname,
