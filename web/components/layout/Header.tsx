@@ -17,7 +17,7 @@ import Brand from "./Brand";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/about-us", label: "Over ons" },
-  { href: "/menu", label: "Menu" },
+  { href: "/menu", label: "Ons menu" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
@@ -70,13 +70,15 @@ export default function Header({ phone = "31612345678" }: HeaderProps) {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="rounded-full">
-                Menu
+                <span aria-hidden="true" className="text-base leading-none">
+                  ☰
+                </span>
+                <span className="sr-only">Open navigation</span>
               </Button>
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-[300px]">
-              <SheetTitle className="mb-6 font-serif text-2xl">Menu</SheetTitle>
-
+            <SheetContent side="right" className="w-[300px] px-6 py-6">
+              <SheetTitle className="sr-only">Site navigation</SheetTitle>
               <div className="flex flex-col gap-5">
                 {navItems.map((item) => {
                   const isActive = pathname === item.href;

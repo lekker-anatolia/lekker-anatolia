@@ -59,7 +59,7 @@ export default function MenuCategoryTabs({ categories }: MenuCategoryTabsProps) 
     <div className="sticky top-[79px] z-30 border-b border-border/60 bg-background/90 backdrop-blur-md">
       <div
         ref={scrollRef}
-        className="flex gap-1 overflow-x-auto px-4 py-3 scrollbar-none sm:justify-center sm:px-6"
+        className="flex gap-1 overflow-x-auto pl-5 pr-4 py-3 scrollbar-none sm:justify-center sm:px-6"
         style={{ scrollbarWidth: "none" }}
       >
         {categories.map((cat) => (
@@ -68,7 +68,7 @@ export default function MenuCategoryTabs({ categories }: MenuCategoryTabsProps) 
             data-slug={cat.slug}
             onClick={() => scrollTo(cat.slug)}
             className={cn(
-              "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all",
+              "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all first:ml-0.5 last:mr-0.5",
               active === cat.slug
                 ? "bg-foreground text-background"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
