@@ -26,7 +26,7 @@ function FacebookIcon({ className }: { className?: string }) {
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about-us", label: "Over ons" },
-  { href: "/menu", label: "Menu" },
+  { href: "/menu", label: "Ons menu" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
