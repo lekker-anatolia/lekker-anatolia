@@ -6,6 +6,7 @@ import Container from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetTrigger,
   SheetTitle,
@@ -84,26 +85,29 @@ export default function Header({ phone = "31612345678" }: HeaderProps) {
                   const isActive = pathname === item.href;
 
                   return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "text-base transition-colors hover:text-foreground",
-                        isActive
-                          ? "font-medium text-foreground"
-                          : "text-muted-foreground"
-                      )}
-                    >
-                      {item.label}
-                    </Link>
+                    <SheetClose key={item.href} asChild>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "text-base transition-colors hover:text-foreground",
+                          isActive
+                            ? "font-medium text-foreground"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    </SheetClose>
                   );
                 })}
 
-                <Button asChild className="mt-4 rounded-full">
-                  <a href={whatsappLink} target="_blank" rel="noreferrer">
-                    Contact via WhatsApp
-                  </a>
-                </Button>
+                <SheetClose asChild>
+                  <Button asChild className="mt-4 rounded-full">
+                    <a href={whatsappLink} target="_blank" rel="noreferrer">
+                      Contact via WhatsApp
+                    </a>
+                  </Button>
+                </SheetClose>
               </div>
             </SheetContent>
           </Sheet>
